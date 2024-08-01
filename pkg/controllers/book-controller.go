@@ -11,7 +11,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var books models.Book
+
 
 func GetBooks(w http.ResponseWriter, r *http.Request) {
 	books := models.GetAllBooks()
@@ -56,6 +56,33 @@ func DeleteBook (w http.ResponseWriter, r *http.Request) {
 	}
 	book := models.DeleteBook(Id)
 	res, _ := json.Marshal(book)
+	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(res)
+}
+
+
+func UpdateBook(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	bookId := params["bookId"]
+	Id, err := strconv.ParseInt(bookId,0,0)
+	if err != nil {
+		fmt.Println("error while parsing")
+	}
+	book := &models.Book{}
+	utils.ParseBody(r, book)
+	bookDetails,db := models.GetBookById(Id)
+	if book.Title != "" {
+		bookDetails.Title = book.Title
+	}
+	if book.Author != "" {
+		bookDetails.Title = book.Author
+	}
+	if book.Publication != "" {
+		bookDetails.Title = book.Publication
+	}
+	db.Save(&bookDetails)
+	res, _ := json.Marshal(bookDetails)
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
