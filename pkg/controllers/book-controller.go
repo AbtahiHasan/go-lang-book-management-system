@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/abtahihasan/go-lang-book-management-system/pkg/models"
+	"github.com/abtahihasan/go-lang-book-management-system/pkg/utils"
 	"github.com/gorilla/mux"
 )
 
@@ -37,3 +38,11 @@ func GetBook(w http.ResponseWriter, r *http.Request) {
 	w.Write(res)
 }
 
+func CreateBook(w http.ResponseWriter, r *http.Request) {
+	Book := &models.Book{}
+	utils.ParseBody(r, Book)
+	b := Book.CreateBook()
+	res,_ := json.Marshal(b)
+	w.WriteHeader(http.StatusOK)
+	w.Write(res)
+}
